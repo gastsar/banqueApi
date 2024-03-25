@@ -1,0 +1,28 @@
+ table,th,td {
+  
+    border-collapse: collapse;
+    }
+table{
+  width: 70%;
+}
+th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+  
+  th:not(:first-child) {
+    width: 25%;  /* 10% de largeur pour les autres th */
+  }
+  
+  td{
+    text-align: center;
+  }
+
+  .table-column{
+     border: 1px solid #ccc;
+     border-bottom: none;
+  }
+  .table-colapse{
+    padding-left: 2rem;
+    text-align: left;
+  }

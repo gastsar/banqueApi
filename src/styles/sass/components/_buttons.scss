@@ -1,0 +1,9 @@
+.btn {
+    @include btn
+}
+
+.btn-collapse{
+    border: none;
+    background: none;
+    width: 2px;
+}
