@@ -1,70 +1,77 @@
-import { useState, useEffect } from 'react';
-import { Input } from "../../components/atoms/Input";
-import { Checkbox } from "../../components/atoms/Checkbox";
-import getToken from "../../services/getToken";
-import { useSelector } from 'react-redux';
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
+import { useDispatch } from 'react-redux';
+import { SET_TOKEN } from '../../reducers/tokenSlice';
+import { loginUser } from '../../services/AuthTokenAPI';
+import { useNavigate } from 'react-router-dom';
 
 function SignIn() {
+    const [error, setError] = useState(null);
+    const formRef = useRef();
+    const dispatch = useDispatch();
+    const navigate = useNavigate(); 
 
-  
-  const [inputData, setInputData] = useState({
-    email: '',
-    password: '',
-    rememberMe: false,
-  });
+    const isConnected = localStorage.getItem('token');
+
+    useEffect(() => {
+        if (isConnected) {
+            navigate('/compte'); 
+        }
+    }, [isConnected, navigate]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const { email, password, rememberMe } = formRef.current;
+
+        try {
+            const data = await loginUser({ email: email.value, password: password.value });
+            if (data.body && data.body.token) {
+                dispatch(SET_TOKEN(data.body.token));
+                
+                if (rememberMe.checked) {
+                    localStorage.setItem('token', data.body.token);
+                }
+                navigate('/compte');
+            }
+        } catch (error) {
+            setError('Nom d\'utilisateur ou mot de passe incorrect.');
+        }
+    };
 
 
-  const handleInput = (e, id) => {
-    const value = e.target.value;
-    setInputData(prevState => ({ ...prevState, [id]: value }));
-  };
+    return (
+        <main className="main bg-dark">
+            <section className="sign-in-content">
+                <div className="header-form">
+                    <span className="sign-in-icon">
+                        <FontAwesomeIcon icon={faCircleUser} />
+                    </span>
+                    <h1>Sign In</h1>
+                </div>
 
-  const [rememberMe, setRememberMe] = useState(false);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const response = await getToken(inputData.email, inputData.password);
-    console.log('API Response:', response);
-
-    // Réinitialiser les valeurs des champs
-    setInputData({ email: '', password: '', rememberMe: false });
-    setRememberMe(false);
-  };
-
-  const hadToken = useSelector((state) => state.logged.hadToken);
-  const tokenError = useSelector((state) => state.error.tokenError);
-  const profileError = useSelector((state) => state.error.profileError);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (hadToken) {
-      navigate('/compte');
-    }
-  }, [navigate, hadToken]);
-
-  return (
-    <main className="main bg-dark">
-      <section className="sign-in-content">
-        <i className="fa fa-user-circle sign-in-icon"></i>
-        <h1>Sign In</h1>
-        <form onSubmit={handleSubmit}>
-          <div className="input-wrapper">
-            <Input label="UserName" placeholder="username" onInput={(e) => handleInput(e, 'email')}  />
-          </div>
-          <div className="input-wrapper">
-            <Input label="Password" type="password" placeholder="password" onInput={(e) => handleInput(e, 'password')} />
-          </div>
-          <div className="input-remember">
-            <Checkbox label=" Remember me" checked={rememberMe} onChange={() => setRememberMe(prevState => !prevState)} />
-          </div>
-          <button type='submit' className="sign-in-button">Sign In</button>
-        </form>
-      </section>
-      {tokenError && <p className='error'>Une erreur , veuillez remplir à nouveau les champs.</p>}
-      {profileError && <p className='error'>Nous sommes désolés, votre profil est inaccessible.</p>}
-    </main>
-  )
+                <form ref={formRef} onSubmit={handleSubmit}>
+                    <div className="input-wrapper">
+                        <label htmlFor="email">Email</label>
+                        <input type="email" id="email" name="email" required />
+                    </div>
+                    <div className="input-wrapper">
+                        <label htmlFor="password">Password</label>
+                        <input type="password" id="password" name="password" required />
+                    </div>
+                    <div className="input-remember">
+                        <input type="checkbox" id="rememberMe" name="rememberMe" />
+                        <label htmlFor="rememberMe">Remember me</label>
+                    </div>
+                    {error && <p className="error-message">{error}</p>}
+                    <button type="submit" className="sign-in-button">
+                        Sign In
+                    </button>
+                </form>
+            </section>
+            
+        </main>
+    );
 }
 
 export default SignIn;

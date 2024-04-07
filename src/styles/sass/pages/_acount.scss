@@ -1,3 +1,77 @@
 .bg-dark {
-    background-color: #12002b;
-  }
+  background-color: #12002b;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.gap-1 {
+  gap: 1rem;
+}
+
+.margin-auto {
+  margin: 1rem auto;
+}
+
+.edit-button {
+  width: 8rem;
+  height: 2rem;
+  display: grid;
+  place-content: center;
+  font-size: 1rem;
+  background: white;
+  color: #00bc77;
+  border-color: #00bc77;
+}
+
+.input-field {
+  width: 10rem;
+  height: 2rem;
+  padding-left: 1rem;
+  font-size: 1.5rem;
+}
+
+.account-content-wrapper {
+  @extend .full-width;
+  @extend .flex-1;
+}
+
+.header-edit {
+  @extend .flex-center;
+  @extend .flex-column;
+}
+
+.edit-name-form {
+  @extend .flex-column;
+}
+
+.edit-name-wrapper,
+.edit-button-wrapper {
+  @extend .flex-center;
+  @extend .flex-row;
+  @extend .gap-1;
+  @extend .margin-auto;
+}
+.content-edit {
+  @extend .flex-center;
+  @extend .flex-column;
+}

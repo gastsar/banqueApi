@@ -31,7 +31,7 @@ const featuresSection = {
 
   const Home = () => {
     return (
-      <>
+      <main className="main">
       <Banner/>
       <section className="features" >
           {featuresSection.items.map((feature, index) => (
@@ -46,7 +46,7 @@ const featuresSection = {
         ))}
       </section>
       
-      </>
+      </main>
     );
   };
 

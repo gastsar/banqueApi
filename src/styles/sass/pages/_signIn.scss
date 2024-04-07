@@ -10,6 +10,16 @@
     margin-top: 3rem;
     padding: 2rem
 }
+.header-form{
+ display: flex;
+gap: 1.5rem;
+ align-items: center;
+ flex-direction: column;
+}
+.input-remember {
+  display: flex;
+  gap: 0.5rem;
+}
 
 .input-wrapper {
     display: flex;
@@ -29,6 +39,7 @@
   }
 
 .sign-in-button {
+  cursor: pointer;
     display: block;
     width: 100%;
     padding: 8px;

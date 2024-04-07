@@ -1,73 +1,94 @@
-import  { useState } from "react";
-import { Input } from "../atoms/Input";
+import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { getUserData, updateUserData } from '../../services/userDataAPI'; 
+import { GET_USER_PROFILE, UPDATE_FIRSTNAME, UPDATE_LASTNAME } from '../../reducers/getUserReducer';
 
-
-const firstname ="Narson";
-const lastname = "Yves"
-export default function Welcome(/* { firstname, lastname } */) {
-  // État pour suivre si le formulaire doit être affiché
+export default function Welcome() {
   const [isEditing, setIsEditing] = useState(false);
-  // États pour suivre les valeurs originales du nom
-  const [originalFirstname, setOriginalFirstname] = useState(firstname);
-  const [originalLastname, setOriginalLastname] = useState(lastname);
+  const [firstNameInput, setFirstNameInput] = useState('');
+  const [lastNameInput, setLastNameInput] = useState('');
+  const userData = useSelector(state => state.getUser.data);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const fetchedUserData = await getUserData(dispatch);
+      if (fetchedUserData) {
+        dispatch(GET_USER_PROFILE(fetchedUserData.body));
+        setFirstNameInput(fetchedUserData.body.firstName);
+        setLastNameInput(fetchedUserData.body.lastName);
+      }
+    };
+
+    fetchData();
+  }, [dispatch]);
 
   const handleEditClick = () => {
-    // Mettre à jour l'état pour afficher le formulaire
     setIsEditing(true);
   };
 
   const handleCancelClick = () => {
-    // Réinitialiser les valeurs du formulaire aux valeurs originales
-    setOriginalFirstname(firstname);
-    setOriginalLastname(lastname);
-    // Mettre à jour l'état pour masquer le formulaire
+    console.log('Canceling edit...');
     setIsEditing(false);
+    setFirstNameInput(userData.firstName);
+    setLastNameInput(userData.lastName);
   };
 
-  const handleSaveClick = (e) => {
-    e.preventDefault(); // Empêcher le comportement par défaut de soumission du formulaire
+  const handleSaveClick = async (e) => {
+    e.preventDefault();
+    
+    // Mettre à jour le nom et le prénom dans le store Redux
+    dispatch(UPDATE_FIRSTNAME(firstNameInput));
+    dispatch(UPDATE_LASTNAME(lastNameInput));
 
-    // Implémentez la logique de sauvegarde ici, si nécessaire
-    // Pour cet exemple, nous allons simplement masquer le formulaire
-    setIsEditing(false);
+    // Envoyer les données mises à jour au serveur
+    const updatedData = await updateUserData({ firstName: firstNameInput, lastName: lastNameInput });
+
+    if (updatedData) {
+      // Mettre à jour les données utilisateur dans le store Redux si la mise à jour est réussie
+      dispatch(GET_USER_PROFILE(updatedData.body));
+      setIsEditing(false);
+    } else {
+      // Gérer les erreurs
+    }
   };
+
 
   return (
     <div className="header-edit">
-      <h1>Welcome back</h1>
+      <h1>Welcome back</h1> 
+
       <div className="editName">
-        {/* Afficher le nom ou le formulaire en fonction de l'état */}
-        {isEditing ? (
-          <form onSubmit={handleSaveClick}>
-            <div className="content-Input">
-                  <Input   
-              placeholder={originalFirstname}
-              //value={originalFirstname}
-              onChange={(value) => setOriginalFirstname(value)}
-            />
-            <Input
-              placeholder={originalLastname}
-              //value={originalLastname}
-              onChange={(value) => setOriginalLastname(value)}
-            />
+        {!isEditing ? (
+          <div className="content-edit">
+            <h1 className="edit-name-wrapper">{userData ? `${userData.firstName} ${userData.lastName}` : '!'}</h1>
+            <button className="edit-button edit-name-wrapper" onClick={handleEditClick}>Edit Name</button>
+          </div>
+        ) : (
+          <form onSubmit={handleSaveClick} className='edit-name-form'>
+            <div className="edit-name-wrapper">
+              <input
+                type="text"
+                name="first name"
+                id="firstName"
+                className="input-field"
+                placeholder={firstNameInput}
+                onChange={(e) => setFirstNameInput(e.target.value)}
+              />
+              <input
+                type="text"
+                name="last name"
+                id="lastName"
+                className="input-field"
+                placeholder={lastNameInput}
+                onChange={(e) => setLastNameInput(e.target.value)}
+              />
             </div>
-          
-            <div>
-              <button type="submit">Save</button>
-              <button type="button" onClick={handleCancelClick}>
-               Cancel
-              </button>
+            <div className='edit-button-wrapper'>
+              <button type="submit" className='edit-button'>Save</button>
+              <button type="button" className='edit-button' onClick={handleCancelClick}>Cancel</button>
             </div>
           </form>
-        ) : (
-          <div className="content-edit">
-            <h1>
-              {originalFirstname} {originalLastname} !
-            </h1>
-            <button className="edit-button" onClick={handleEditClick}>
-              Edit Name
-            </button>
-          </div>
         )}
       </div>
     </div>
