@@ -36,21 +36,14 @@ export default function Welcome() {
 
   const handleSaveClick = async (e) => {
     e.preventDefault();
-    
-    // Mettre à jour le nom et le prénom dans le store Redux
+
     dispatch(UPDATE_FIRSTNAME(firstNameInput));
     dispatch(UPDATE_LASTNAME(lastNameInput));
 
-    // Envoyer les données mises à jour au serveur
-    const updatedData = await updateUserData({ firstName: firstNameInput, lastName: lastNameInput });
+     await updateUserData({ firstName: firstNameInput, lastName: lastNameInput });
 
-    if (updatedData) {
-      // Mettre à jour les données utilisateur dans le store Redux si la mise à jour est réussie
-      dispatch(GET_USER_PROFILE(updatedData.body));
       setIsEditing(false);
-    } else {
-      // Gérer les erreurs
-    }
+    
   };
 
 

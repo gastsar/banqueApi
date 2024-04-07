@@ -1,5 +1,5 @@
 import axios from "axios";
-import { GET_USER_PROFILE } from '../reducers/getUserReducer'; // Import de l'action SET_USER_PROFILE depuis votre reducer
+import { GET_USER_PROFILE } from '../reducers/getUserReducer'; 
 
 export const getUserData = async (dispatch) => {
   const token = localStorage.getItem('token');

@@ -9,6 +9,7 @@ basePath: /api/v1
 schemes:
     - http
 paths:
+
     /user/login:
         post:
             tags:
@@ -112,49 +113,50 @@ paths:
                     description: Invalid Fields
                 "500":
                     description: Internal Server Error
-    user/transactions:
+    
+     
+    /user/profil/checking:
         get:
             tags:
-                - Transactions Module
+            - Transactions checking  Module
             summary: Get all transactions
-            description: API for getting all transactions
+            description: API for getting all transactions checking
             produces:
                 - application/json
             responses:
                 "200":
                     description: success
-
                 "500":
                     description: Internal Server Error
-
-        post:
+        
+    /user/profil/saving:
+        get:
             tags:
-                - Transactions Module
-            summary: Create new transaction
-            description: API for creating one transaction
-            parameters:
-                - in: header
-                  type: string
-                  name: Authorization
-                  description: Attach Bearer JWT token
-                  required: true
-                - in: body
-                  name: body
-                  description: Create new transaction
-                  required: true
-                  schema:
-                      $ref: "#/definitions/Transaction"
+            - Transactions saving  Module
+            summary: Get all transactions
+            description: API for getting all transactions saving
             produces:
                 - application/json
             responses:
                 "200":
                     description: success
-                    schema:
-                        $ref: "#/definitions/Transaction"
                 "500":
                     description: Internal Server Error
+    
+    /user/profil/credit:
+        get:
+            tags:
+            - Transactions credit  Module
+            summary: Get all transactions
+            responses:
+                "200":
+                    description: success
+                "500":
+                    description: Internal Server Error
+    
 
-    "/transactions/{id}":
+
+    /user/profil/transaction/{id}:
         get:
             tags:
                 - Transactions Module
@@ -229,11 +231,9 @@ definitions:
                 type: string
                 description: user last name
 
-    Transactione:
+    Transaction:
         properties:
-            id:
-                type: string
-                description: recevier id
+           
             date:
                 type: string
                 description: transaction date
@@ -253,8 +253,8 @@ definitions:
                 type: string
                 description: transaction category
             note:
-              type:string
-              description: transaction note
+               
+                description: transaction note
             
     Login:
         properties:
@@ -291,4 +291,22 @@ definitions:
             lastName:
                 type: string
 
- 
+    TransactionUpdateResponse:
+        type: object
+        properties:
+            id:
+                type: string
+            date:
+                type: string
+            description:
+                type: string
+            amount:
+                type: string
+            balance:
+                type: string
+            transactionType:
+                type: string
+            category:
+                type: string
+            note:
+                type: string
